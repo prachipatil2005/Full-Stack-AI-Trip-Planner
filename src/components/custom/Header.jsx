@@ -1,99 +1,45 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Button } from '../ui/button';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { googleLogout, useGoogleLogin } from '@react-oauth/google';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-} from "@/components/ui/dialog"
-import { FcGoogle } from "react-icons/fc";
-import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 
-
-function Header() {
-  const user=JSON.parse(localStorage.getItem('user'));
-  const [openDialog,setOpenDialog]=useState(false);
-
-  
-  useEffect(() =>{
-    console.log(user)
-  },[])
-
-  const login=useGoogleLogin({
-    onSuccess:(codeResp)=>GetUserProfile(codeResp),
-    onError:(error)=>console.log(error)
-  })
-  
-  const GetUserProfile=(tokenInfo)=>{
-    axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?acess_token=${tokenInfo?.access_token}`,{
-      headers: {
-       Authorization: `Bearer ${tokenInfo?.access_token}`,
-       Accept:'Application/json'
-      }
-    }).then((resp) => {console.log(resp);
-      localStorage.setItem('user',JSON.stringify(resp.data));
-      setOpenDialog(false);
-      window.location.reload();
-    })
-  }
-
+function Hero() {
   return (
-    <div className='p-3 shadow-sm flex justify-between items-center px-4'>
-      <img src='/logo.svg'/>
-      <div >
-       {user? 
-       <div className='flex items-center gap-4'>
-        <a href="/create-trip">
-         <Button variant="outline" className= "rounded-full">Create Trip</Button> 
-        </a>
-        <a href="/my-trips">
-        <Button variant="outline" className= "rounded-full">My Trips </Button> 
-        </a>
-         <Popover>
-          <PopoverTrigger>
-            <img src={user?.picture} className='rounded-full w-[38px] h-[38px]' />
-          </PopoverTrigger>
-          <PopoverContent>
-            <h2 className="cursor-pointer" onClick={()=>{
-              googleLogout();
-              localStorage.clear();
-              window.location.reload();
-            }}>Logout</h2>
-           
-          </PopoverContent>
-         </Popover>
-
-       </div>
-       : <Button onClick={()=>setOpenDialog(true)}>Sign In</Button> 
-       }
+    <div className="relative flex flex-col items-center justify-center bg-gradient-to-r from-[#3b82f6] to-[#1d4ed8] text-white py-16 min-h-screen overflow-hidden">
+      {/* Animated Airplane */}
+      <div className="animate-flyAirplane">
+        <img src="/aeroplane.png" alt="Airplane" className="w-[120px] h-[120px] object-contain" />
       </div>
-      
-      <Dialog open={openDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogDescription>
-              <img src="/logo.svg"/>
-              <h2 className="font-bold text-lg mt-6">Sign In with Google</h2>
-              <p>Sign In to the App with Google authentication securely</p>
-              <Button 
-              onClick={login} className="w-full mt-5 flex gap-4 items-center">
-                <FcGoogle className="h-7 w-7"/>
-                Sign In With Google
-              </Button>
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
 
+      {/* Heading */}
+      <h1 className="font-extrabold text-[50px] text-center max-w-3xl">
+        <span className="text-white">Discover Your Next Adventure with AI:</span> <br />
+        Personalized Itineraries at Your Fingertips
+      </h1>
+
+      {/* Description */}
+      <p className="text-xl text-white text-center max-w-lg mx-auto mt-6 opacity-80">
+        Your personal trip planner and travel curator, creating custom itineraries tailored to your interests and budget.
+      </p>
+
+      {/* Button */}
+      <Link to={'/create-trip'}>
+        <Button className="mt-8 bg-[#3b82f6] hover:bg-[#2563eb] text-white px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105">
+          Get Started, It's Free.
+        </Button>
+      </Link>
+
+      {/* Travel Images Grid with Bigger Size */}
+      <div className="grid grid-cols-3 gap-6 mt-16 max-w-4xl mx-auto">
+        <img src='/tripLogo.png' alt="Travel 1" className='w-[200px] h-[200px] object-cover rounded-lg shadow-xl hover:scale-105 transform transition-all'/>
+        <img src='/tripLogo.png' alt="Travel 2" className='w-[200px] h-[200px] object-cover rounded-lg shadow-xl hover:scale-105 transform transition-all'/>
+        <img src='/tripLogo.png' alt="Travel 3" className='w-[200px] h-[200px] object-cover rounded-lg shadow-xl hover:scale-105 transform transition-all'/>
+        <img src='/tripLogo.png' alt="Travel 4" className='w-[200px] h-[200px] object-cover rounded-lg shadow-xl hover:scale-105 transform transition-all'/>
+        <img src='/tripLogo.png' alt="Travel 5" className='w-[200px] h-[200px] object-cover rounded-lg shadow-xl hover:scale-105 transform transition-all'/>
+        <img src='/tripLogo.png' alt="Travel 6" className='w-[200px] h-[200px] object-cover rounded-lg shadow-xl hover:scale-105 transform transition-all'/>
+      </div>
     </div>
-  )
+  );
 }
 
-export default Header
+export default Hero;

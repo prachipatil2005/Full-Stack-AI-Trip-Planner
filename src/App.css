@@ -1,38 +1,207 @@
-#root {
+/* Header Container */
+.header {
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  color: black;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* Left section containing logo and navigation */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 2rem; /* space between logo and navigation */
 }
 
 .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+  height: 3rem;
+  cursor: pointer;
+  transition: transform 0.3s ease;
 }
+
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  transform: scale(1.1);
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Navigation */
+/* .nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-item {
+  text-decoration: none;
+  color: inherit;
+  font-weight: 700;
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.nav-item svg {
+  margin-left: 16px; 
+  font-size: 1.5rem;
+}
+
+
+.nav-item:hover {
+  color: #3b82f6;
+} */
+ /* Navigation Container */
+.nav-links {
+  display: flex;
+  gap: 2rem; /* Increased space for a cleaner look */
+  align-items: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.nav-links:hover {
+  transform: scale(1.05); /* Subtle scale effect when hovering over the entire nav */
+}
+
+/* Individual Navigation Items */
+.nav-item {
+  text-decoration: none;
+  color: inherit;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  position: relative; /* for pseudo-element positioning */
+  padding: 8px 0; /* Add padding for spacing around text */
+  transition: color 0.3s ease, transform 0.3s ease;
+  overflow: hidden; /* Ensure pseudo-elements do not overflow */
+}
+
+/* Icon inside the navigation items */
+.nav-item svg {
+  margin-left: 12px; /* Adjust the space between text and icon */
+  font-size: 1.7rem; /* Icon size increased for emphasis */
+  transition: transform 0.3s ease; /* Smooth transition on hover */
+}
+
+/* On hover effect for icon scaling */
+.nav-item:hover svg {
+  transform: scale(1.2); /* Icon grows slightly when hovering over nav item */
+}
+
+/* Hover Effect for Text and Color */
+.nav-item:hover {
+  color: #3b82f6; /* Change color on hover */
+  transform: translateX(5px); /* Text shifts to the right on hover */
+}
+
+/* Adding a decorative line below each nav item on hover */
+.nav-item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0%;
+  height: 3px;
+  background-color: #3b82f6;
+  transition: width 0.3s ease; /* Smooth transition for line animation */
+}
+
+/* Line Animation when hovering */
+.nav-item:hover::after {
+  width: 100%; /* Line fills when hovering */
+}
+
+/* Adding a subtle shadow effect */
+.nav-item:hover {
+  text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2); /* Adds a soft glow */
+}
+
+
+/* Right section: greeting, buttons, avatar, and theme toggle */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 2rem; /* space between elements */
+}
+
+/* Navigation Buttons */
+.nav-buttons {
+  display: flex;
+  gap: 1rem; /* space between "Create Trip" and "My Trips" buttons */
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 9999px;
+  font-weight: 500;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #3b82f6;
+  color: white;
+}
+
+/* Avatar */
+.user-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background-color: #9b59b6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 9999px;
+  transition: background 0.3s ease;
+}
+
+.theme-toggle:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* Dark Mode Styling */
+.dark-mode {
+  background-color: #1a202c;
+  color: white;
+}
+
+@keyframes flyAirplane {
+  0% {
+    transform: translateX(-200px) translateY(-200px); /* Start from top-left */
   }
-  to {
-    transform: rotate(360deg);
+  25% {
+    transform: translateX(100vw) translateY(0); /* Move to the right */
+  }
+  50% {
+    transform: translateX(100vw) translateY(100vh); /* Move to bottom-right */
+  }
+  75% {
+    transform: translateX(0) translateY(100vh); /* Move to bottom-left */
+  }
+  100% {
+    transform: translateX(-200px) translateY(0); /* Return to top-left */
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+.animate-flyAirplane {
+  position: absolute;
+  animation: flyAirplane 15s linear infinite; /* Continuous movement */
+  z-index: 10; /* Ensure it's above other elements */
+  width: 900px; /* Increase the width to make the airplane larger */
+  height: 900px; /* Increase the height to make the airplane larger */
 }
