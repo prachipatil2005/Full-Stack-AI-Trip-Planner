@@ -1,45 +1,136 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
-import { Link } from 'react-router-dom';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { googleLogout, useGoogleLogin } from '@react-oauth/google';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+} from "@/components/ui/dialog";
+import { FcGoogle } from "react-icons/fc";
+import { FaHome, FaInfoCircle, FaEnvelope, FaMoon, FaSun } from "react-icons/fa";
+import axios from 'axios';
 
+function Header() {
+  const user = JSON.parse(localStorage.getItem('user'));
+  const [openDialog, setOpenDialog] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
-function Hero() {
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
+
+  const login = useGoogleLogin({
+    onSuccess: (codeResp) => GetUserProfile(codeResp),
+    onError: (error) => console.error(error),
+  });
+
+  const GetUserProfile = (tokenInfo) => {
+    axios
+      .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenInfo?.access_token}`, {
+        headers: {
+          Authorization: `Bearer ${tokenInfo?.access_token}`,
+          Accept: 'Application/json',
+        },
+      })
+      .then((resp) => {
+        localStorage.setItem('user', JSON.stringify(resp.data));
+        setOpenDialog(false);
+        window.location.reload();
+      })
+      .catch((err) => console.error('Error fetching user profile:', err));
+  };
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.documentElement.classList.toggle('dark');
+  };
+
   return (
-    <div className="relative flex flex-col items-center justify-center bg-gradient-to-r from-[#3b82f6] to-[#1d4ed8] text-white py-16 min-h-screen overflow-hidden">
-      {/* Animated Airplane */}
-      <div className="animate-flyAirplane">
-        <img src="/aeroplane.png" alt="Airplane" className="w-[120px] h-[120px] object-contain" />
+    <header className={`header ${darkMode ? 'dark-mode' : ''}`}>
+      <div className="header-left">
+        <img src="/logo.svg" alt="Logo" className="logo" />
+        {/* Navigation Links */}
+        <nav className="nav-links">
+          <a href="/" className="nav-item">
+            <FaHome />
+            Home
+          </a>
+          <a href="/about" className="nav-item">
+            <FaInfoCircle />
+            About
+          </a>
+          <a href="/contact" className="nav-item">
+            <FaEnvelope />
+            Contact
+          </a>
+        </nav>
       </div>
 
-      {/* Heading */}
-      <h1 className="font-extrabold text-[50px] text-center max-w-3xl">
-        <span className="text-white">Discover Your Next Adventure with AI:</span> <br />
-        Personalized Itineraries at Your Fingertips
-      </h1>
-
-      {/* Description */}
-      <p className="text-xl text-white text-center max-w-lg mx-auto mt-6 opacity-80">
-        Your personal trip planner and travel curator, creating custom itineraries tailored to your interests and budget.
-      </p>
-
-      {/* Button */}
-      <Link to={'/create-trip'}>
-        <Button className="mt-8 bg-[#3b82f6] hover:bg-[#2563eb] text-white px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105">
-          Get Started, It's Free.
-        </Button>
-      </Link>
-
-      {/* Travel Images Grid with Bigger Size */}
-      <div className="grid grid-cols-3 gap-6 mt-16 max-w-4xl mx-auto">
-        <img src='/tripLogo.png' alt="Travel 1" className='w-[200px] h-[200px] object-cover rounded-lg shadow-xl hover:scale-105 transform transition-all'/>
-        <img src='/tripLogo.png' alt="Travel 2" className='w-[200px] h-[200px] object-cover rounded-lg shadow-xl hover:scale-105 transform transition-all'/>
-        <img src='/tripLogo.png' alt="Travel 3" className='w-[200px] h-[200px] object-cover rounded-lg shadow-xl hover:scale-105 transform transition-all'/>
-        <img src='/tripLogo.png' alt="Travel 4" className='w-[200px] h-[200px] object-cover rounded-lg shadow-xl hover:scale-105 transform transition-all'/>
-        <img src='/tripLogo.png' alt="Travel 5" className='w-[200px] h-[200px] object-cover rounded-lg shadow-xl hover:scale-105 transform transition-all'/>
-        <img src='/tripLogo.png' alt="Travel 6" className='w-[200px] h-[200px] object-cover rounded-lg shadow-xl hover:scale-105 transform transition-all'/>
+      <div className="header-right">
+        {/* User Info */}
+        {user ? (
+          <>
+            <span className="greeting">Hello, {user?.name.split(' ')[0]}</span>
+            <div className="nav-buttons">
+              <a href="/create-trip">
+                <Button variant="outline" className="btn">Create Trip</Button>
+              </a>
+              <a href="/my-trips">
+                <Button variant="outline" className="btn">My Trips</Button>
+              </a>
+            </div>
+            <Popover>
+              <PopoverTrigger>
+                <img src={user?.picture} alt="User" className="user-avatar" />
+              </PopoverTrigger>
+              <PopoverContent>
+                <button
+                  className="logout-btn"
+                  onClick={() => {
+                    googleLogout();
+                    localStorage.clear();
+                    window.location.reload();
+                  }}
+                >
+                  Logout
+                </button>
+              </PopoverContent>
+            </Popover>
+          </>
+        ) : (
+          <Button onClick={() => setOpenDialog(true)}>Sign In</Button>
+        )}
       </div>
-    </div>
+
+      {/* Theme Toggle */}
+      <button className="theme-toggle" onClick={toggleDarkMode}>
+        {darkMode ? <FaSun className="icon" /> : <FaMoon className="icon" />}
+      </button>
+
+      {/* Sign-In Dialog */}
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogDescription>
+              <img src="/logo.svg" alt="Logo" className="logo-large" />
+              <h2 className="dialog-title">Sign In with Google</h2>
+              <p>Sign in to the app with Google authentication securely.</p>
+              <Button onClick={login} className="google-btn">
+                <FcGoogle className="google-icon" />
+                Sign In With Google
+              </Button>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    </header>
   );
 }
 
-export default Hero;
+export default Header;
